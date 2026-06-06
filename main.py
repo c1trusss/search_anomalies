@@ -447,13 +447,6 @@ def main():
     # -- НОВАЯ ЧАСТЬ: ПОСТРОЕНИЕ ГРАФИКОВ --
     print("\n--- НАЧИНАЕМ ПОСТРОЕНИЕ ГРАФИКОВ ---")
 
-    # reasons_csv - DataFrame с информацией об аномалиях
-    # filtered - DataFrame с отфильтрованными данными до расчета OTS (для базы OTS)
-    # ots - DataFrame с расчетным OTS до удаления аномалий
-
-    # Для графика OTS нам нужны все данные, чтобы посчитать базу 'beforeFiltering'.
-    # reasons_csv содержит только удаленные аномалии. Нам нужен более полный набор.
-    # Создадим dataframe со всеми категориями и BrandID, чтобы правильно рассчитать начальный OTS.
     all_filtered = prepare_data(raw)
 
     build_and_save_plots(all_filtered, ots, reasons_csv)

@@ -32,7 +32,9 @@ def load_data(data_dir):
 
 
 def prepare_data(df):
-
+    """
+    Подготовка данных
+    """
     df = df.copy()
 
     df["Weight"] = pd.to_numeric(df["Weight"], errors="coerce")
@@ -57,7 +59,9 @@ def prepare_data(df):
 
 
 def build_daily_ots(df):
-
+    """
+    Подсчёт дневного влияния
+    """
     grouped = (
         df.groupby(
             [
@@ -85,7 +89,9 @@ def build_daily_ots(df):
 
 
 def detect_anomalies(ots):
-
+    """
+    Выявление аномалий
+    """
     group_cols = [
         "CategoryNameDelivery",
         "BrandID",
@@ -134,7 +140,9 @@ def detect_anomalies(ots):
 
 
 def build_reasons(anomalies):
-
+    """
+    df с причинами удаления
+    """
     reasons = anomalies[
         [
             "SubjectID",
@@ -168,7 +176,9 @@ def build_reasons(anomalies):
 
 
 def build_anomalies(anomalies):
-
+    """
+    df с аномалиями
+    """
     return (
         anomalies[["SubjectID", "researchdate"]]
         .drop_duplicates()
@@ -177,7 +187,9 @@ def build_anomalies(anomalies):
 
 
 def save_outputs(anomalies_csv, reasons_csv):
-
+    """
+    Сохранение данных
+    """
     Path(OUTPUT_DIR).mkdir(exist_ok=True)
 
     anomalies_csv.to_csv(f"{OUTPUT_DIR}/anomalies.csv", index=False)
@@ -324,9 +336,8 @@ def plot_removed_respondents(reasons_data, all_data, month, output_dir):
     fig, ax = plt.subplots(figsize=(16, 6))
 
     x = np.arange(len(plot_data))
-    bar_width = 0.35  # чуть-чуть сузим, чтобы смотрелось аккуратнее
+    bar_width = 0.35
 
-    # Строим бары
     ax.bar(x - bar_width / 2, plot_data["TotalRemoved"], width=bar_width, label="Удалено (всего)", color='tab:blue')
     ax.bar(x + bar_width / 2, plot_data["UniqueRemoved"], width=bar_width, label="Удалено (уникальных)",
            color='darkorange')
@@ -337,10 +348,9 @@ def plot_removed_respondents(reasons_data, all_data, month, output_dir):
     ax.set_xlabel("Дата")
     ax.set_ylabel("Количество outlier'ов")
 
-    # Превращаем даты '2025-05-01' -> в красивые '01', '02' и т.д.
     labels = plot_data["researchdate"].astype(str).str.split('-').str[-1]
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=0)  # применил 0 вместо 90, так как "01", "02" короткие и влезут горизонтально
+    ax.set_xticklabels(labels, rotation=0)
 
     # Оформление
     plt.legend()
@@ -444,7 +454,6 @@ def main():
     print(f"Найдено аномалий: {len(reasons_csv)}")
     print(f"Удалено пар: {len(anomalies_csv)}")
 
-    # -- НОВАЯ ЧАСТЬ: ПОСТРОЕНИЕ ГРАФИКОВ --
     print("\n--- НАЧИНАЕМ ПОСТРОЕНИЕ ГРАФИКОВ ---")
 
     all_filtered = prepare_data(raw)
